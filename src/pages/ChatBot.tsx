@@ -111,7 +111,6 @@ const ChatBot = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header onLanguageChange={setLanguage} language={language} />
       
       <div className="flex-1 container mx-auto px-4 py-4 flex flex-col max-w-4xl">
         {/* Chat Header */}
