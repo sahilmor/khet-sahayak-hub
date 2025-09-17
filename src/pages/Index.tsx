@@ -1,3 +1,4 @@
+// src/pages/Index.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Book, MessageCircle, Newspaper, ShoppingCart, ArrowRight, Sprout } from 'lucide-react';
@@ -148,7 +149,7 @@ const Index = () => {
       </div>
 
       {/* Services Section */}
-      <div className="py-16 lg:py-24">
+      <div className="bg-muted py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
@@ -197,7 +198,25 @@ const Index = () => {
         </div>
       </div>
 
-     
+      {/* Final Call to Action Section */}
+      <div className="container mx-auto px-4 pb-16 lg:pb-24">
+        <Card className="p-8 md:p-12 text-center bg-primary text-primary-foreground shadow-elevated">
+          <h2 className="text-3xl font-bold tracking-tight">
+            {language === 'hi' ? 'आज ही शुरुआत करें!' : 'Start Your Journey Today!'}
+          </h2>
+          <p className="mt-4 text-lg max-w-2xl mx-auto opacity-90">
+            {language === 'hi' ? 'स्मार्ट खेती की दुनिया में कदम रखें और अपनी फसल को नई ऊंचाइयों पर ले जाएं।' : 'Step into the world of smart farming and take your harvest to the next level.'}
+          </p>
+          <div className="mt-8">
+            <Link to="/chatbot">
+              <Button size="xl" variant="accent" className="font-semibold">
+                {language === 'hi' ? 'फसल गुरु से जुड़ें' : 'Join FasalGuru'}
+                <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </Card>
+      </div>
 
       {/* Footer */}
       <footer className="w-full bg-card border-t border-border/50 py-8">

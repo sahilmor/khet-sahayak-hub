@@ -19,6 +19,7 @@ const buttonVariants = cva(
         accent: "bg-accent text-accent-foreground hover:bg-accent-light shadow-soft font-medium",
         success: "bg-success text-success-foreground hover:bg-success/90 shadow-soft",
         warning: "bg-warning text-warning-foreground hover:bg-warning/90 shadow-soft",
+        custom: "bg-none"
       },
       size: {
         default: "h-11 px-6 py-2",

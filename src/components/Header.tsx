@@ -1,6 +1,5 @@
-// src/components/Header.tsx
-import { Link } from 'react-router-dom';
-import { Sprout, Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Sprout, Menu, Settings, UserCircle, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -14,7 +13,18 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { LanguageToggle } from './LanguageToggle';
+import { useAuth } from '@/context/Auth';
 
 interface HeaderProps {
   onLanguageChange?: (lang: 'en' | 'hi') => void;
@@ -25,6 +35,8 @@ interface HeaderProps {
 export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +60,62 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
       ? "bg-background/80 backdrop-blur-sm border-b border-border/50"
       : "bg-transparent border-b-0"
   );
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const renderAuthSection = () => {
+    if (user) {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="custom" className="relative h-9 rounded-full px-2">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>{user.avatar}</AvatarFallback>
+              </Avatar>
+              <span className="font-semibold text-sm mr-2">{user.name}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{user.name}</p>
+                <p className="text-xs leading-none text-muted-foreground pt-1">
+                  {user.email}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => navigate('/profile')}>
+                <UserCircle className="mr-2 h-4 w-4" />
+                <span>{language === 'hi' ? 'प्रोफ़ाइल' : 'Profile'}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate('/settings')}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>{language === 'hi' ? 'सेटिंग्स' : 'Settings'}</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>{language === 'hi' ? 'लॉग आउट' : 'Log out'}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    } else {
+      return (
+        <Link to="/login">
+          <Button variant="default" className="hidden sm:flex">
+            {language === 'hi' ? 'लॉग इन' : 'Login'}
+          </Button>
+        </Link>
+      );
+    }
+  };
 
   return (
     <header className={headerClasses}>
@@ -80,6 +148,8 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
         <div className="flex items-center space-x-4">
           <LanguageToggle onLanguageChange={onLanguageChange} className="hidden sm:flex" />
           
+          {renderAuthSection()}
+          
           {/* Mobile Drawer */}
           <Drawer direction="right" open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <DrawerTrigger asChild>
@@ -105,6 +175,16 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
                     </Link>
                   </DrawerClose>
                 ))}
+                {!user && (
+                    <DrawerClose asChild>
+                      <Link
+                        to="/login"
+                        className={cn(buttonVariants({ variant: "default", size: "lg" }), "w-full justify-start gap-3")}
+                      >
+                        <span className="font-semibold">{language === 'hi' ? 'लॉग इन' : 'Login'}</span>
+                      </Link>
+                    </DrawerClose>
+                )}
               </nav>
               <div className="p-4 border-t">
                 <LanguageToggle onLanguageChange={onLanguageChange} className="w-full" />
