@@ -42,8 +42,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Header onLanguageChange={onLanguageChange} language={language} navLinks={navLinks} />
-      <main className="min-h-screen bg-background pt-16">
+      <Header/>
+      <main className="min-h-screen bg-background">
         {children}
       </main>
     </>

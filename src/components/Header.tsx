@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Sprout, Menu, Settings, UserCircle, LogOut } from 'lucide-react';
+import { Sprout, Menu, Settings, UserCircle, LogOut, Newspaper, Book, ShoppingCart, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -25,18 +25,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LanguageToggle } from './LanguageToggle';
 import { useAuth } from '@/context/Auth';
+import { useLanguageStore } from '@/store/language';
+import { translations } from '@/translations';
 
-interface HeaderProps {
-  onLanguageChange?: (lang: 'en' | 'hi') => void;
-  language?: 'en' | 'hi';
-  navLinks: { to: string; text: string; icon: any }[];
-}
-
-export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderProps) {
+export function Header() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { language } = useLanguageStore();
+  const t = translations.header;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,6 +51,14 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const navLinks = [
+    { to: '/', text: t.home[language], icon: Sprout },
+    { to: '/articles', text: t.articles[language], icon: Newspaper },
+    { to: '/lab-booking', text: t.labTest[language], icon: Book },
+    { to: '/marketplace', text: t.marketplace[language], icon: ShoppingCart },
+    { to: '/chatbot', text: t.aiAssistant[language], icon: MessageCircle },
+  ];
 
   const headerClasses = cn(
     "fixed top-0 z-50 w-full transition-all duration-300 ease-in-out",
@@ -82,7 +88,7 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs leading-none text-muted-foreground pt-1">
+                <p className="text-xs leading-none text-muted-foreground">
                   {user.email}
                 </p>
               </div>
@@ -91,17 +97,17 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => navigate('/profile')}>
                 <UserCircle className="mr-2 h-4 w-4" />
-                <span>{language === 'hi' ? 'प्रोफ़ाइल' : 'Profile'}</span>
+                <span>{t.profile[language]}</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate('/settings')}>
                 <Settings className="mr-2 h-4 w-4" />
-                <span>{language === 'hi' ? 'सेटिंग्स' : 'Settings'}</span>
+                <span>{t.settings[language]}</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              <span>{language === 'hi' ? 'लॉग आउट' : 'Log out'}</span>
+              <span>{t.logout[language]}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -110,7 +116,7 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
       return (
         <Link to="/login">
           <Button variant="default" className="hidden sm:flex">
-            {language === 'hi' ? 'लॉग इन' : 'Login'}
+            {t.login[language]}
           </Button>
         </Link>
       );
@@ -146,7 +152,7 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
         </nav>
 
         <div className="flex items-center space-x-4">
-          <LanguageToggle onLanguageChange={onLanguageChange} className="hidden sm:flex" />
+          <LanguageToggle className="hidden sm:flex" />
           
           {renderAuthSection()}
           
@@ -161,7 +167,7 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
             <DrawerContent className="p-4 rounded-t-none h-full w-2/3 right-0 left-auto top-0">
               <DrawerHeader className="text-left">
                 <DrawerTitle>FasalGuru</DrawerTitle>
-                <DrawerDescription>{language === 'hi' ? 'आपका कृषि सहायक' : 'Your Farming Assistant'}</DrawerDescription>
+                <DrawerDescription>{t.yourFarmingAssistant[language]}</DrawerDescription>
               </DrawerHeader>
               <nav className="flex flex-col gap-2 p-4">
                 {navLinks.map((link) => (
@@ -181,13 +187,13 @@ export function Header({ onLanguageChange, language = 'en', navLinks }: HeaderPr
                         to="/login"
                         className={cn(buttonVariants({ variant: "default", size: "lg" }), "w-full justify-start gap-3")}
                       >
-                        <span className="font-semibold">{language === 'hi' ? 'लॉग इन' : 'Login'}</span>
+                        <span className="font-semibold">{t.login[language]}</span>
                       </Link>
                     </DrawerClose>
                 )}
               </nav>
               <div className="p-4 border-t">
-                <LanguageToggle onLanguageChange={onLanguageChange} className="w-full" />
+                <LanguageToggle className="w-full" />
               </div>
             </DrawerContent>
           </Drawer>
