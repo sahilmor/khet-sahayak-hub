@@ -61,46 +61,60 @@ const Index = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* Hero Section */}
       <div className="relative isolate overflow-hidden min-h-screen flex items-center">
-        {/* Replace the src with a local image path like /hero-background.jpg */}
+        {/* Hero Background Image */}
         <img
-          src="/hero.jpg"
-          alt="An Indian farmer in a field of crops"
-          className="absolute inset-0 h-full w-full object-cover opacity-20 dark:opacity-10"
+          src="/hero-farming.jpg"
+          alt="Indian farmer working in lush green fields during golden hour"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 -z-10 bg-gradient-warm opacity-80" />
-        <div className="container mx-auto px-4 z-10 grid md:grid-cols-2 items-center gap-12 py-24 md:py-0">
-          {/* Left Column: Headline and CTA */}
-          <div>
-            <Badge variant="secondary" className="mb-4">
+        <div className="absolute inset-0 bg-gradient-overlay" />
+        
+        <div className="container mx-auto px-4 z-10 grid lg:grid-cols-5 items-center gap-16 py-32 min-h-screen">
+          {/* Left Column: Main Content */}
+          <div className="lg:col-span-3 text-white">
+            <Badge variant="secondary" className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm">
               {t.mission.label[language]}
             </Badge>
-            <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl text-balance mb-4">
-              {t.hero.title[language]}
+            
+            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl text-balance mb-8 leading-[1.1]">
+              Bringing Innovation to{' '}
+              <span className="text-accent">Your Farming Journey</span>
             </h1>
-            <p className="text-lg leading-8 text-muted-foreground max-w-xl mb-8">
+            
+            <p className="text-xl leading-relaxed text-white/90 max-w-2xl mb-12">
               {t.hero.description[language]}
             </p>
-            <Link to="/chatbot">
-              <Button size="lg" variant="hero" className="shadow-elevated">
-                {t.hero.cta[language]}
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/chatbot">
+                <Button size="lg" variant="hero" className="text-lg px-8 py-4 h-auto font-semibold">
+                  {t.hero.cta[language]}
+                  <ArrowRight className="h-5 w-5 ml-2" />
+                </Button>
+              </Link>
+              <Link to="/articles">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-4 h-auto bg-white/10 text-white border-white/20 hover:bg-white/20 backdrop-blur-sm">
+                  Learn More
+                </Button>
+              </Link>
+            </div>
           </div>
           
-          {/* Right Column: Mission Block */}
-          <div className="relative md:flex md:justify-end">
-            <Card className="p-6 md:p-8 max-w-sm w-full bg-card/70 backdrop-blur-sm">
-              <div className="flex items-center space-x-2 mb-2">
-                <Sprout className="h-5 w-5 text-primary" />
-                <h3 className="text-lg font-bold text-foreground">
+          {/* Right Column: Mission Card */}
+          <div className="lg:col-span-2 relative flex justify-center lg:justify-end">
+            <Card className="p-8 max-w-sm w-full bg-white/95 backdrop-blur-sm shadow-hero border-0">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <Sprout className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">
                   {t.mission.title[language]}
                 </h3>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed mb-6">
                 {t.mission.description[language]}
               </p>
-              <Link to="/articles" className="mt-4 text-primary text-sm font-semibold flex items-center gap-1 hover:underline transition-colors">
+              <Link to="/articles" className="text-primary font-semibold flex items-center gap-2 hover:gap-3 transition-all duration-200">
                 {t.mission.learnMore[language]}
                 <ArrowRight className="h-4 w-4" />
               </Link>
