@@ -9,6 +9,10 @@ import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Badge } from '@/components/ui/badge';
 import { useLanguageStore } from '@/store/language';
 import { translations } from '@/translations';
+import StatsSection from '@/components/StatsSection';
+import HowItWorksSection from '@/components/HowItWorksSection';
+import FeaturesSection from '@/components/FeaturesSection';
+import FAQSection from '@/components/FAQSection';
 
 const Index = () => {
   const { language } = useLanguageStore();
@@ -123,6 +127,15 @@ const Index = () => {
         </div>
       </div>
       
+      {/* Stats Section */}
+      <StatsSection />
+      
+      {/* Features Section */}
+      <FeaturesSection />
+      
+      {/* How It Works Section */}
+      <HowItWorksSection />
+      
       {/* Problem & Solution Section */}
       <div className="container mx-auto px-4 py-16 lg:py-24">
         <div className="grid md:grid-cols-2 items-center gap-12">
@@ -196,6 +209,9 @@ const Index = () => {
           </Card>
         </div>
       </div>
+
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Final Call to Action Section */}
       <div className="container mx-auto px-4 pb-16 lg:pb-24">
