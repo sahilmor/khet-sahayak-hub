@@ -14,7 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lab_bookings: {
+        Row: {
+          created_at: string
+          farmer_contact: string
+          farmer_id: string
+          id: string
+          lab_id: string
+          notes: string | null
+          preferred_date: string
+          preferred_time: string
+          sample_type: string
+          status: string
+          test_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          farmer_contact: string
+          farmer_id: string
+          id?: string
+          lab_id: string
+          notes?: string | null
+          preferred_date: string
+          preferred_time: string
+          sample_type: string
+          status?: string
+          test_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          farmer_contact?: string
+          farmer_id?: string
+          id?: string
+          lab_id?: string
+          notes?: string | null
+          preferred_date?: string
+          preferred_time?: string
+          sample_type?: string
+          status?: string
+          test_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_bookings_farmer_id_fkey"
+            columns: ["farmer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "lab_bookings_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          farm_location: string | null
+          farm_size: string | null
+          full_name: string
+          id: string
+          is_verified: boolean | null
+          lab_address: string | null
+          lab_license_number: string | null
+          lab_name: string | null
+          lab_services: string[] | null
+          phone: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          farm_location?: string | null
+          farm_size?: string | null
+          full_name: string
+          id?: string
+          is_verified?: boolean | null
+          lab_address?: string | null
+          lab_license_number?: string | null
+          lab_name?: string | null
+          lab_services?: string[] | null
+          phone?: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          farm_location?: string | null
+          farm_size?: string | null
+          full_name?: string
+          id?: string
+          is_verified?: boolean | null
+          lab_address?: string | null
+          lab_license_number?: string | null
+          lab_name?: string | null
+          lab_services?: string[] | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +136,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "farmer" | "laboratory"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +263,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["farmer", "laboratory"],
+    },
   },
 } as const
