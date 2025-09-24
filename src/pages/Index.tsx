@@ -73,7 +73,7 @@ const Index = () => {
         />
         <div className="absolute inset-0 bg-gradient-overlay" />
         
-        <div className="container mx-auto px-4 z-10 grid lg:grid-cols-5 items-center gap-16 py-32 min-h-screen">
+        <div className="max-w-[90%] mx-auto px-4 z-10 grid lg:grid-cols-5 items-end gap-16 py-32 min-h-screen">
           {/* Left Column: Main Content */}
           <div className="lg:col-span-3 text-white">
             <Badge variant="secondary" className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm">
@@ -106,19 +106,19 @@ const Index = () => {
           
           {/* Right Column: Mission Card */}
           <div className="lg:col-span-2 relative flex justify-center lg:justify-end">
-            <Card className="p-8 max-w-sm w-full bg-white/95 backdrop-blur-sm shadow-hero border-0">
+            <Card className="p-8 max-w-sm w-full bg-white/10 backdrop-blur-sm shadow-hero border-0">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-2 rounded-full bg-primary/10">
-                  <Sprout className="h-6 w-6 text-primary" />
+                  <Sprout className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground">
+                <h3 className="text-xl font-bold text-white">
                   {t.mission.title[language]}
                 </h3>
               </div>
-              <p className="text-muted-foreground leading-relaxed mb-6">
+              <p className="text-white leading-relaxed mb-6">
                 {t.mission.description[language]}
               </p>
-              <Link to="/articles" className="text-primary font-semibold flex items-center gap-2 hover:gap-3 transition-all duration-200">
+              <Link to="/articles" className="text-white font-semibold flex items-center gap-2 hover:gap-3 transition-all duration-200">
                 {t.mission.learnMore[language]}
                 <ArrowRight className="h-4 w-4" />
               </Link>
