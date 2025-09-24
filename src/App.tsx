@@ -16,10 +16,12 @@ import {
 } from '@/components/ui/drawer';
 import { LanguageToggle } from './components/LanguageToggle';
 import { Header } from './components/Header';
+import { Toaster } from '@/components/ui/sonner';
 import Auth from './pages/Auth';
 import Articles from './pages/Articles';
 import ChatBot from './pages/ChatBot';
 import LabBooking from './pages/LabBooking';
+import LabDashboard from './pages/LabDashboard';
 import Marketplace from './pages/Marketplace';
 import NotFound from './pages/NotFound';
 import Index from './pages/Index';
@@ -61,8 +63,10 @@ const App = () => {
           <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
           <Route path="/chatbot" element={<Layout><ChatBot /></Layout>} />
           <Route path="/login" element={<Auth />} />
+          <Route path="/lab-dashboard" element={<LabDashboard />} />
           <Route path="*" element={<Layout><NotFound /></Layout>} />
         </Routes>
+        <Toaster />
       </BrowserRouter>
     </AuthProvider>
   );

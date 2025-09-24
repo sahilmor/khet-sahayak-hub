@@ -18,6 +18,13 @@ const Auth: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [village, setVillage] = useState('');
   const [city, setCity] = useState('');
+  const [role, setRole] = useState<'farmer' | 'laboratory'>('farmer');
+  const [labName, setLabName] = useState('');
+  const [labLicenseNumber, setLabLicenseNumber] = useState('');
+  const [labAddress, setLabAddress] = useState('');
+  const [labServices, setLabServices] = useState<string[]>([]);
+  const [farmLocation, setFarmLocation] = useState('');
+  const [farmSize, setFarmSize] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -51,9 +58,19 @@ const Auth: React.FC = () => {
           options: {
             data: {
               full_name: fullName,
-              phone_number: phoneNumber,
-              village,
-              city,
+              phone: phoneNumber,
+              role,
+              ...(role === 'laboratory' ? {
+                lab_name: labName,
+                lab_license_number: labLicenseNumber,
+                lab_address: labAddress,
+                lab_services: labServices,
+              } : {
+                village,
+                city,
+                farm_location: farmLocation,
+                farm_size: farmSize,
+              }),
             },
           },
         });
@@ -164,6 +181,35 @@ const Auth: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <>
+                {/* Role Selection */}
+                <div>
+                  <Label>{language === 'hi' ? 'पंजीकरण प्रकार' : 'Registration Type'}</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <button
+                      type="button"
+                      onClick={() => setRole('farmer')}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                        role === 'farmer'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-muted-foreground/20 hover:border-primary/50'
+                      }`}
+                    >
+                      {language === 'hi' ? '🌾 किसान' : '🌾 Farmer'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRole('laboratory')}
+                      className={`p-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                        role === 'laboratory'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-muted-foreground/20 hover:border-primary/50'
+                      }`}
+                    >
+                      {language === 'hi' ? '🔬 प्रयोगशाला' : '🔬 Laboratory'}
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <Label htmlFor="fullName">{language === 'hi' ? 'पूरा नाम' : 'Full Name'}</Label>
                   <Input
@@ -188,30 +234,92 @@ const Auth: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="village">{language === 'hi' ? 'गांव' : 'Village'}</Label>
-                    <Input
-                      id="village"
-                      type="text"
-                      placeholder={language === 'hi' ? 'गांव का नाम' : 'Village'}
-                      value={village}
-                      onChange={(e) => setVillage(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="city">{language === 'hi' ? 'शहर' : 'City'}</Label>
-                    <Input
-                      id="city"
-                      type="text"
-                      placeholder={language === 'hi' ? 'शहर का नाम' : 'City'}
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
+                {role === 'farmer' ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="village">{language === 'hi' ? 'गांव' : 'Village'}</Label>
+                        <Input
+                          id="village"
+                          type="text"
+                          placeholder={language === 'hi' ? 'गांव का नाम' : 'Village'}
+                          value={village}
+                          onChange={(e) => setVillage(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="city">{language === 'hi' ? 'शहर' : 'City'}</Label>
+                        <Input
+                          id="city"
+                          type="text"
+                          placeholder={language === 'hi' ? 'शहर का नाम' : 'City'}
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="farmLocation">{language === 'hi' ? 'फार्म स्थान' : 'Farm Location'}</Label>
+                        <Input
+                          id="farmLocation"
+                          type="text"
+                          placeholder={language === 'hi' ? 'फार्म का स्थान' : 'Farm location'}
+                          value={farmLocation}
+                          onChange={(e) => setFarmLocation(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="farmSize">{language === 'hi' ? 'फार्म का आकार' : 'Farm Size'}</Label>
+                        <Input
+                          id="farmSize"
+                          type="text"
+                          placeholder={language === 'hi' ? 'एकड़ में' : 'In acres'}
+                          value={farmSize}
+                          onChange={(e) => setFarmSize(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div>
+                      <Label htmlFor="labName">{language === 'hi' ? 'प्रयोगशाला का नाम' : 'Laboratory Name'}</Label>
+                      <Input
+                        id="labName"
+                        type="text"
+                        placeholder={language === 'hi' ? 'प्रयोगशाला का नाम दर्ज करें' : 'Enter laboratory name'}
+                        value={labName}
+                        onChange={(e) => setLabName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="labLicenseNumber">{language === 'hi' ? 'लाइसेंस नंबर' : 'License Number'}</Label>
+                      <Input
+                        id="labLicenseNumber"
+                        type="text"
+                        placeholder={language === 'hi' ? 'लाइसेंस नंबर दर्ज करें' : 'Enter license number'}
+                        value={labLicenseNumber}
+                        onChange={(e) => setLabLicenseNumber(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="labAddress">{language === 'hi' ? 'प्रयोगशाला का पता' : 'Laboratory Address'}</Label>
+                      <Input
+                        id="labAddress"
+                        type="text"
+                        placeholder={language === 'hi' ? 'पूरा पता दर्ज करें' : 'Enter complete address'}
+                        value={labAddress}
+                        onChange={(e) => setLabAddress(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
 
