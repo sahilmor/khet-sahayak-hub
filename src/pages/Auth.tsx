@@ -84,16 +84,22 @@ const Auth: React.FC = () => {
     }
   };
 
-  // Optional social login handlers (stubbed). Wire real providers as needed.
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'apple') => {
     try {
       setLoading(true);
       setError('');
-      await supabase.auth.signInWithOAuth({ provider });
-      // Supabase will redirect for OAuth by default (if configured).
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        }
+      });
+
+      if (error) throw error;
+      
     } catch (err: any) {
       setError(err?.message || 'Social login failed');
-    } finally {
       setLoading(false);
     }
   };
