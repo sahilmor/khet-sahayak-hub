@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/Auth';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import Login from '../../public/login.jpg'
 
 const Auth: React.FC = () => {
@@ -56,6 +56,7 @@ const Auth: React.FC = () => {
           email,
           password,
           options: {
+            emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: fullName,
               phone: phoneNumber,
@@ -122,7 +123,7 @@ const Auth: React.FC = () => {
         <div
           className={`hidden md:block md:w-1/2 lg:w-2/3 bg-cover bg-center relative`}
           style={{
-            backgroundImage: Login,
+            backgroundImage: `url(${Login})`,
             order: isLogin ? 2 : 1,
           }}
         >

@@ -1,8 +1,9 @@
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useState, createContext, useContext, ReactNode, useEffect } from 'react';
 
 interface AuthContextType {
   user: { name: string, avatar: string, email: string, role?: string } | null;
+  session: any;
   logout: () => void;
 }
 
@@ -10,30 +11,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<{ name: string, avatar: string, email: string, role?: string } | null>(null);
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+      
       if (session) {
-        // Fetch user profile to get role information  
+        // Defer profile fetching to avoid blocking auth state
         setTimeout(async () => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role, full_name')
-            .eq('user_id', session.user.id)
-            .single();
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role, full_name')
+              .eq('user_id', session.user.id)
+              .maybeSingle();
 
-          setUser({
-            name: profile?.full_name || session.user.user_metadata.full_name || 'User',
-            avatar: (profile?.full_name || session.user.user_metadata.full_name)?.charAt(0) || 'U',
-            email: session.user.email || '',
-            role: profile?.role || session.user.user_metadata.role
-          });
+            setUser({
+              name: profile?.full_name || session.user.user_metadata.full_name || 'User',
+              avatar: (profile?.full_name || session.user.user_metadata.full_name)?.charAt(0) || 'U',
+              email: session.user.email || '',
+              role: profile?.role || session.user.user_metadata.role
+            });
 
-          // Redirect based on role
-          if (profile?.role === 'laboratory') {
-            window.location.href = '/lab-dashboard';
-          } else if (profile?.role === 'farmer') {
-            window.location.href = '/';
+            // Redirect based on role
+            if (profile?.role === 'laboratory') {
+              window.location.href = '/lab-dashboard';
+            } else if (profile?.role === 'farmer') {
+              window.location.href = '/';
+            }
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+            // Set user with basic info if profile fetch fails
+            setUser({
+              name: session.user.user_metadata.full_name || 'User',
+              avatar: (session.user.user_metadata.full_name)?.charAt(0) || 'U',
+              email: session.user.email || '',
+              role: session.user.user_metadata.role
+            });
           }
         }, 0);
       } else {
@@ -41,9 +57,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      // Let the auth state change handler deal with user setup
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const logout = async () => {
@@ -52,7 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, session, logout }}>
       {children}
     </AuthContext.Provider>
   );
