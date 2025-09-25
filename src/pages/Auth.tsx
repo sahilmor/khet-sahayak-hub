@@ -35,9 +35,30 @@ const Auth: React.FC = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Redirect away from auth page if already signed in
-    if (user) {
-      navigate('/', { replace: true });
+    // Handle OAuth callback and redirect logic
+    const handleOAuthCallback = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data.session && user) {
+        // User is authenticated, redirect based on role
+        if (user.role === 'laboratory') {
+          navigate('/lab-dashboard', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
+      }
+    };
+
+    // Check if this is an OAuth callback
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('code')) {
+      handleOAuthCallback();
+    } else if (user) {
+      // Regular redirect for already signed in users
+      if (user.role === 'laboratory') {
+        navigate('/lab-dashboard', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
     }
   }, [user, navigate]);
 
@@ -49,14 +70,17 @@ const Auth: React.FC = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        console.log('Attempting login with email:', email);
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        console.log('Login successful:', data.user?.id);
       } else {
-        const { error } = await supabase.auth.signUp({
+        console.log('Attempting signup with email:', email, 'role:', role);
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: `${window.location.origin}/auth`,
             data: {
               full_name: fullName,
               phone: phoneNumber,
@@ -76,10 +100,30 @@ const Auth: React.FC = () => {
           },
         });
         if (error) throw error;
-        setMessage(language === 'hi' ? 'साइन अप सफल! कृपया अपने ईमेल की पुष्टि करें।' : 'Signup successful! Please check your email to confirm.');
+        console.log('Signup successful:', data.user?.id);
+        
+        if (data.user && !data.user.email_confirmed_at) {
+          setMessage(language === 'hi' ? 'साइन अप सफल! कृपया अपने ईमेल की पुष्टि करें।' : 'Signup successful! Please check your email to confirm.');
+        } else {
+          setMessage(language === 'hi' ? 'खाता सफलतापूर्वक बनाया गया!' : 'Account created successfully!');
+        }
       }
     } catch (err: any) {
-      setError(err?.message || 'Something went wrong');
+      console.error('Auth error:', err);
+      let errorMessage = err?.message || 'Something went wrong';
+      
+      // Provide user-friendly error messages
+      if (errorMessage.includes('Email not confirmed')) {
+        errorMessage = language === 'hi' ? 'कृपया पहले अपने ईमेल की पुष्टि करें।' : 'Please confirm your email first.';
+      } else if (errorMessage.includes('Invalid login credentials')) {
+        errorMessage = language === 'hi' ? 'गलत ईमेल या पासवर्ड।' : 'Invalid email or password.';
+      } else if (errorMessage.includes('User already registered')) {
+        errorMessage = language === 'hi' ? 'यह ईमेल पहले से पंजीकृत है।' : 'This email is already registered.';
+      } else if (errorMessage.includes('Password should be at least')) {
+        errorMessage = language === 'hi' ? 'पासवर्ड कम से कम 6 अक्षर का होना चाहिए।' : 'Password should be at least 6 characters long.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -93,13 +137,19 @@ const Auth: React.FC = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo: `${window.location.origin}/auth`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
 
       if (error) throw error;
       
+      // Don't set loading to false here as the redirect will happen
     } catch (err: any) {
+      console.error('Social login error:', err);
       setError(err?.message || 'Social login failed');
       setLoading(false);
     }
@@ -139,7 +189,7 @@ const Auth: React.FC = () => {
         >
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-extrabold">
-              {isLogin ? (language === 'hi' ? 'लॉग इन करें' : 'Start your perfect trip') : (language === 'hi' ? 'साइन अप करें' : 'Sign Up')}
+              {isLogin ? (language === 'hi' ? 'लॉग इन करें' : 'Welcome Back') : (language === 'hi' ? 'साइन अप करें' : 'Create Account')}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
               {isLogin
