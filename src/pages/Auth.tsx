@@ -7,7 +7,7 @@ import { Loader2, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/Auth';
 import { supabase } from '@/lib/supabase';
-import Login from '@/hero-farming.jpg'
+import Login from '../../public/login.jpg'
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
