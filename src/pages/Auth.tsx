@@ -80,7 +80,7 @@ const Auth: React.FC = () => {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth`,
+            emailRedirectTo: `${window.location.origin}/login`,
             data: {
               full_name: fullName,
               phone: phoneNumber,
@@ -137,7 +137,7 @@ const Auth: React.FC = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/auth`,
+          redirectTo: `${window.location.origin}/login`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

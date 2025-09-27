@@ -76,6 +76,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          city: string | null
           created_at: string
           email: string
           farm_location: string | null
@@ -91,8 +92,10 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
+          village: string | null
         }
         Insert: {
+          city?: string | null
           created_at?: string
           email: string
           farm_location?: string | null
@@ -108,8 +111,10 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
+          village?: string | null
         }
         Update: {
+          city?: string | null
           created_at?: string
           email?: string
           farm_location?: string | null
@@ -125,6 +130,7 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
+          village?: string | null
         }
         Relationships: []
       }

@@ -62,6 +62,7 @@ const App = () => {
           <Route path="/lab-booking" element={<Layout><LabBooking /></Layout>} />
           <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
           <Route path="/chatbot" element={<Layout><ChatBot /></Layout>} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/login" element={<Auth />} />
           <Route path="/lab-dashboard" element={<LabDashboard />} />
           <Route path="*" element={<Layout><NotFound /></Layout>} />
