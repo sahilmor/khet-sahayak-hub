@@ -31,25 +31,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             console.log('Profile fetch result:', profile, profileError);
 
-            // If no profile exists and this is a social login, create a basic profile
-            if (!profile && !profileError) {
-              console.log('No profile found, creating basic profile for social login user');
-              const { error: insertError } = await supabase
-                .from('profiles')
-                .insert({
-                  user_id: session.user.id,
-                  email: session.user.email,
-                  full_name: session.user.user_metadata.full_name || session.user.user_metadata.name || 'User',
-                  role: 'farmer' // Default role for social login users
-                });
-              
-              if (insertError) {
-                console.error('Error creating profile:', insertError);
-              } else {
-                console.log('Profile created successfully');
-              }
-            }
-
             const userRole = profile?.role || 'farmer';
             const userName = profile?.full_name || session.user.user_metadata.full_name || session.user.user_metadata.name || 'User';
 
@@ -60,18 +41,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               role: userRole
             });
 
-            // Redirect based on role after a short delay to ensure state is set
-            setTimeout(() => {
-              if (userRole === 'laboratory') {
-                if (window.location.pathname !== '/lab-dashboard') {
+            // Only redirect if we're on auth pages
+            if (window.location.pathname === '/login' || window.location.pathname === '/auth') {
+              setTimeout(() => {
+                if (userRole === 'laboratory') {
                   window.location.href = '/lab-dashboard';
-                }
-              } else if (userRole === 'farmer') {
-                if (window.location.pathname !== '/') {
+                } else {
                   window.location.href = '/';
                 }
-              }
-            }, 100);
+              }, 100);
+            }
 
           } catch (error) {
             console.error('Error in auth state handler:', error);
